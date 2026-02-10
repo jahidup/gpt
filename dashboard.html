@@ -214,7 +214,7 @@
   </div>
 
   <script>
-    const API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyEb9RCN_hIoJgY28TQsUnDTA3LeFIMwZzTJHlqvKNmJb2st9Tl4KCPoxnJQbM_msy2/exec";
 
     const form = document.getElementById("updateForm");
     const alertBox = document.getElementById("alert");
@@ -242,7 +242,7 @@
     }
 
     function formatCurrency(value) {
-      return Number(value).toLocaleString("en-US", { style: "currency", currency: "USD" });
+      return Number(value).toLocaleString("en-US", { style: "currency", currency: "INR" });
     }
 
     async function apiRequest(payload) {
