@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaMart Admin Dashboard</title>
+  <style>
+    :root {
+      --bg: #0d1124;
+      --bg2: #161b39;
+      --text: #f3f6ff;
+      --muted: #b9c4e8;
+      --primary: #6c5ce7;
+      --secondary: #00d2ff;
+      --card: rgba(255, 255, 255, 0.08);
+      --line: rgba(255, 255, 255, 0.16);
+      --success: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 25%, rgba(108, 92, 231, 0.22), transparent 42%),
+        radial-gradient(circle at 85% 12%, rgba(0, 210, 255, 0.16), transparent 30%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: min(1040px, 96vw);
+      margin: 0 auto;
+    }
+
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      animation: fadeIn 0.6s ease both;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .muted { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+
+    .logout {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.25s ease;
+      height: fit-content;
+    }
+
+    .logout:hover {
+      transform: translateY(-2px);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: #ffd5d5;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      margin-bottom: 18px;
+      animation: riseIn 0.7s ease both;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #dce5ff;
+      font-size: 0.92rem;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      background: rgba(255,255,255,0.06);
+      color: white;
+      outline: none;
+      transition: 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    input:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.17);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+    .alert {
+      margin-top: 14px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 10px 12px;
+      display: none;
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+
+    .alert.success { display: block; color: #d1fae5; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.35); }
+    .alert.error { display: block; color: #fee2e2; background: rgba(248, 113, 113, 0.14); border-color: rgba(248, 113, 113, 0.35); }
+    .alert.warn { display: block; color: #fef3c7; background: rgba(251, 191, 36, 0.14); border-color: rgba(251, 191, 36, 0.32); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 11px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.94rem;
+    }
+
+    th { color: #d3ddff; font-weight: 700; background: rgba(255,255,255,0.04); }
+    td { color: #ecf2ff; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top">
+      <div>
+        <h1>Price Management Dashboard</h1>
+        <div class="muted" id="welcomeText">Welcome, Admin</div>
+      </div>
+      <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+
+    <section class="panel">
+      <h2 style="margin-top: 0;">Update Product Price</h2>
+      <div class="muted" style="margin-bottom:14px;">Enter product ID exactly as in your Products sheet and set a valid price.</div>
+
+      <form id="updateForm" class="form-grid">
+        <div>
+          <label for="productId">Product ID</label>
+          <input id="productId" name="productId" required placeholder="e.g. P1001" />
+        </div>
+        <div>
+          <label for="newPrice">New Price (USD)</label>
+          <input id="newPrice" name="newPrice" type="number" min="0" step="0.01" required placeholder="e.g. 29.99" />
+        </div>
+        <button class="btn" type="submit" id="updateBtn">Update Price</button>
+      </form>
+
+      <div id="alert" class="alert"></div>
+    </section>
+
+    <section class="panel">
+      <h2 style="margin-top:0;">Current Products</h2>
+      <div class="muted" style="margin-bottom:12px;">Live preview from Google Sheets.</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Price</th></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    const form = document.getElementById("updateForm");
+    const alertBox = document.getElementById("alert");
+    const updateBtn = document.getElementById("updateBtn");
+    const tbody = document.getElementById("tableBody");
+    const welcomeText = document.getElementById("welcomeText");
+
+    const isLoggedIn = sessionStorage.getItem("adminAuth") === "true";
+    const user = sessionStorage.getItem("adminUser") || "Admin";
+    welcomeText.textContent = `Welcome, ${user}`;
+
+    if (!isLoggedIn) {
+      alert("Session expired. Please login.");
+      window.location.href = "admin-login.html";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.clear();
+      window.location.href = "admin-login.html";
+    });
+
+    function showAlert(type, message) {
+      alertBox.className = `alert ${type}`;
+      alertBox.textContent = message;
+    }
+
+    function formatCurrency(value) {
+      return Number(value).toLocaleString("en-US", { style: "currency", currency: "USD" });
+    }
+
+    async function apiRequest(payload) {
+      if (!API_URL.startsWith("http")) throw new Error("Please set API_URL first.");
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      return response.json();
+    }
+
+    async function loadProducts() {
+      try {
+        const data = await apiRequest({ action: "getProducts" });
+        if (!data.success) throw new Error(data.message || "Failed to load products");
+
+        tbody.innerHTML = "";
+        const products = data.products || [];
+
+        if (products.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" style="color:#b9c4e8;">No products available.</td></tr>`;
+          return;
+        }
+
+        products.forEach(item => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.id ?? "-"}</td>
+            <td>${item.name ?? "Unnamed"}</td>
+            <td>${formatCurrency(item.price ?? 0)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        showAlert("warn", `Could not refresh products: ${error.message}`);
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const productId = form.productId.value.trim();
+      const newPriceRaw = form.newPrice.value.trim();
+      const newPrice = Number(newPriceRaw);
+
+      if (!productId) {
+        showAlert("error", "Product ID is required.");
+        return;
+      }
+      if (!newPriceRaw || Number.isNaN(newPrice) || newPrice < 0) {
+        showAlert("error", "Please enter a valid non-negative price.");
+        return;
+      }
+
+      updateBtn.disabled = true;
+      updateBtn.textContent = "Updating...";
+
+      try {
+        const data = await apiRequest({ action: "updatePrice", productId, newPrice });
+        if (!data.success) throw new Error(data.message || "Update failed.");
+
+        showAlert("success", `Success! ${data.message}`);
+        form.reset();
+        await loadProducts();
+      } catch (error) {
+        showAlert("error", error.message);
+      } finally {
+        updateBtn.disabled = false;
+        updateBtn.textContent = "Update Price";
+      }
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>

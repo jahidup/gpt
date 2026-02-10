@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaMart Admin Login</title>
+  <style>
+    :root {
+      --bg1: #0f1226;
+      --bg2: #1a1f3d;
+      --card: rgba(255, 255, 255, 0.1);
+      --line: rgba(255, 255, 255, 0.15);
+      --text: #edf2ff;
+      --muted: #b5c0e2;
+      --primary: #6c5ce7;
+      --secondary: #00d2ff;
+      --danger: #f87171;
+      --success: #34d399;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(108, 92, 231, 0.28), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(0, 210, 255, 0.22), transparent 35%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      padding: 22px;
+    }
+
+    .login-box {
+      width: min(450px, 100%);
+      border-radius: 20px;
+      padding: 28px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+      animation: floatIn 0.65s ease both;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+      letter-spacing: 0.3px;
+    }
+
+    p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #dbe5ff;
+      font-weight: 600;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.06);
+      color: white;
+      outline: none;
+      transition: 0.25s ease;
+      font-size: 0.96rem;
+    }
+
+    input:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 0.98rem;
+      font-weight: 700;
+      background: linear-gradient(95deg, var(--primary), var(--secondary));
+      cursor: pointer;
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    button:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    button:disabled { opacity: 0.75; cursor: not-allowed; }
+
+    .alert {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      display: none;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .alert.success { display: block; color: #d1fae5; background: rgba(52, 211, 153, 0.12); border-color: rgba(52, 211, 153, 0.35); }
+    .alert.error { display: block; color: #fee2e2; background: rgba(248, 113, 113, 0.14); border-color: rgba(248, 113, 113, 0.35); }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 0.84rem;
+      color: #b8c3e8;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(22px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <section class="login-box">
+    <h1>Admin Portal</h1>
+    <p>Sign in to manage product prices. Credentials are validated from the <strong>Admins</strong> sheet.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" id="loginBtn">Login</button>
+    </form>
+
+    <div id="alert" class="alert"></div>
+    <div class="hint">Only setup needed: replace <code>API_URL</code> in this file and dashboard.html.</div>
+  </section>
+
+  <script>
+    const API_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    const form = document.getElementById("loginForm");
+    const alertBox = document.getElementById("alert");
+    const loginBtn = document.getElementById("loginBtn");
+
+    function showAlert(type, text) {
+      alertBox.className = `alert ${type}`;
+      alertBox.textContent = text;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = form.username.value.trim();
+      const password = form.password.value.trim();
+
+      if (!username || !password) {
+        showAlert("error", "Username and password are required.");
+        return;
+      }
+
+      if (!API_URL.startsWith("http")) {
+        showAlert("error", "Please set API_URL first.");
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Signing in...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "login", username, password })
+        });
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.message || "Login failed");
+
+        sessionStorage.setItem("adminAuth", "true");
+        sessionStorage.setItem("adminUser", data.user?.username || username);
+        showAlert("success", "Login successful. Redirecting...");
+        setTimeout(() => window.location.href = "dashboard.html", 700);
+      } catch (error) {
+        showAlert("error", error.message);
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
+      }
+    });
+  </script>
+</body>
+</html>
