@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaMart Premium Shop</title>
+  <style>
+    :root {
+      --bg: #0f1226;
+      --bg-soft: #171b35;
+      --text: #f5f7ff;
+      --muted: #aeb8d9;
+      --primary: #6c5ce7;
+      --secondary: #00d2ff;
+      --accent: #ff7eb3;
+      --success: #34d399;
+      --danger: #f87171;
+      --shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.25), transparent 40%),
+        radial-gradient(circle at 80% 10%, rgba(0, 210, 255, 0.2), transparent 30%),
+        linear-gradient(135deg, var(--bg), #0b0e20);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 28px 20px 16px;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(15, 18, 38, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 10;
+    }
+
+    .container {
+      width: min(1120px, 92vw);
+      margin: 0 auto;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: clamp(1.3rem, 2vw, 1.7rem);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #fff, #cfd8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 40px 20px 10px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.15;
+      max-width: 780px;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .hero p {
+      margin-top: 16px;
+      color: var(--muted);
+      max-width: 640px;
+      line-height: 1.7;
+      animation: fadeUp 1s ease both;
+    }
+
+    .status {
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      min-height: 24px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      padding: 26px 20px 60px;
+    }
+
+    .card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      transform: translateY(14px);
+      opacity: 0;
+      animation: cardIn 0.6s ease forwards;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 16px 36px rgba(108, 92, 231, 0.35);
+      border-color: rgba(108, 92, 231, 0.5);
+    }
+
+    .product-id {
+      font-size: 0.8rem;
+      color: #cad4ff;
+      opacity: 0.85;
+      margin-bottom: 10px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      min-height: 50px;
+      line-height: 1.4;
+    }
+
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      margin: 6px 0 14px;
+      background: rgba(255,255,255,0.05);
+      transition: transform 0.35s ease;
+    }
+
+    .card:hover .product-image { transform: scale(1.03); }
+
+    .price {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #eff3ff;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(0, 210, 255, 0.14);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 24px;
+      text-align: center;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      border: 1px dashed rgba(255,255,255,0.2);
+      color: var(--muted);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding-top: 28px; }
+      .grid { padding-top: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container top-row">
+      <div class="brand">NovaMart</div>
+      <a class="badge" href="admin-login.html">Admin Portal</a>
+    </div>
+  </header>
+
+  <section class="hero container">
+    <h1>Premium products with images and INR prices, updated in real-time.</h1>
+    <p>Every card below fetches name, image, and price from Google Sheets via Apps Script API. Replace API URL once, deploy, and your INR catalog is live.</p>
+    <div id="status" class="status">Loading products...</div>
+  </section>
+
+  <main class="container">
+    <section id="productGrid" class="grid"></section>
+  </main>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzJoB7Q3YoybTM3_KXRVQ5WB5yWFT_jbXTB8zrjkA6r-fDMV972tlkvOejGqwsmBpbK/exec";
+    const CURRENCY_CODE = "INR";
+    const LOCALE = "en-IN";
+
+    const statusEl = document.getElementById("status");
+    const gridEl = document.getElementById("productGrid");
+
+    function formatCurrency(value) {
+      const amount = Number(value);
+      if (Number.isNaN(amount)) return "₹0.00";
+      return amount.toLocaleString(LOCALE, { style: "currency", currency: CURRENCY_CODE, maximumFractionDigits: 2 });
+    }
+
+    function renderProducts(products) {
+      gridEl.innerHTML = "";
+
+      if (!Array.isArray(products) || products.length === 0) {
+        gridEl.innerHTML = '<div class="empty">No products found. Add rows in your Products sheet.</div>';
+        return;
+      }
+
+      products.forEach((product, index) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.style.animationDelay = `${index * 90}ms`;
+
+        card.innerHTML = `
+          <div class="product-id">Product ID: ${product.id ?? "N/A"}</div>
+          <div class="product-name">${product.name ?? "Unnamed Product"}</div>
+          <img class="product-image" src="${product.image || `https://placehold.co/640x400/171b35/eef2ff?text=${encodeURIComponent(product.name || "Product")}`}" alt="${product.name ?? "Product image"}" loading="lazy" />
+          <div class="price">${formatCurrency(product.price)}</div>
+        `;
+
+        gridEl.appendChild(card);
+      });
+    }
+
+    async function loadProducts() {
+      if (!API_URL.startsWith("http")) {
+        statusEl.textContent = "Set your API URL in index.html first.";
+        statusEl.style.color = "#f87171";
+        return;
+      }
+
+      try {
+        statusEl.textContent = "Fetching latest products...";
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "getProducts" })
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.message || "Unable to fetch products.");
+        }
+
+        renderProducts(data.products || []);
+        statusEl.textContent = `Loaded ${data.products.length} products.`;
+        statusEl.style.color = "#aeb8d9";
+      } catch (error) {
+        statusEl.textContent = `Error: ${error.message}`;
+        statusEl.style.color = "#f87171";
+        gridEl.innerHTML = '<div class="empty">Could not load products. Check your Apps Script deployment and API URL.</div>';
+      }
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
